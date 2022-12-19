@@ -1,4 +1,5 @@
-export const Contract = "0xf3B8B51737ad97fCFa53DeF2b60a4C8D8E253D61";
+//export const Contract = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+export const Contract = process.env.REACT_APP_CONTRACT;
 // ABI du Contrat
 export const ABI ={ abi :
     [
