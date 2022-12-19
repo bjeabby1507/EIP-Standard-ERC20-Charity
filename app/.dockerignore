@@ -1,0 +1,11 @@
+# Items that don't need to be in a Docker image.
+**/.env
+**/.git
+Dockerfile
+.dockerignore
+.gitignore
+README.md
+
+# Artifacts that will be built during image creation.
+**/node_modules/
+build
