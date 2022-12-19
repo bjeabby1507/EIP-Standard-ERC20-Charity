@@ -385,7 +385,7 @@ function App() {
             <div style={{textAlign: 'left', padding: '0px 20px 20px 20px'}}>
                 {mined && <div>
                 Your purchase has been confirmed and is on the blockchain.<br /><br />
-                <a target="_blank" rel="noopener noreferrer" href={`https://rinkeby.etherscan.io/tx/${transactionHash}`}>View on Etherscan</a>
+                <a target="_blank" rel="noopener noreferrer" href={`https://goerli.etherscan.io/tx/${transactionHash}`}>View on Etherscan</a>
                 </div>}
                 {!mined && !showSign && <div><p>Please wait while we confirm your transaction on the blockchain....</p></div>}
                 {!mined && showSign && <div><p>Please sign to confirm your transaction.</p></div>}
