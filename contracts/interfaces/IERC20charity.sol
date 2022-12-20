@@ -76,6 +76,11 @@ interface IERC20charity is IERC165 {
     function deleteFromWhitelist(address toRemove) external;
 
     /**
+    *@notice Get all registered charity addresses.
+     */
+    function getAllWhitelistedAddresses() external view returns (address[] memory) ;
+
+    /**
     *@notice Set personlised rate for charity address in {whitelistedRate}.
     * @dev Requirements:
      *

@@ -324,6 +324,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getAllWhitelistedAddresses",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",

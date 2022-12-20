@@ -116,6 +116,11 @@ interface IERC20charity is IERC165 {
     function deleteFromWhitelist(address toRemove) external;
 
     /**
+    *@notice Get all registered charity addresses.
+     */
+    function getAllWhitelistedAddresses() external ;
+
+    /**
     *@notice Set personlised rate for charity address in {whitelistedRate}.
     * @dev Requirements:
      *
@@ -210,6 +215,8 @@ function checkInterface(address _contract) external returns (bool) {
     mapping(address =>  mapping(address => uint256)) private _donation; 
     mapping (address =>address) private _defaultAddress; 
 
+    address[] whitelistedAddresses; //Addresses whitelisted
+
     event AddedToWhitelist (address toAdd);
     event RemovedFromWhitelist (address toRemove);
     event DonnationAddressChanged (address whitelistedAddr);
@@ -235,6 +242,10 @@ Remove the address from the whitelist and set rate to the default rate.
 | Parameter | Description |
 | ---------|-------------|
 | toRemove | The address to remove from whitelist.
+
+#### **getAllWhitelistedAddresses**
+
+Get all registered charity addresses.
 
 #### **setSpecificRate**
 

@@ -28,6 +28,10 @@ contract CharityToken is ERC20Charity{
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
     }
+
+    function selfmint() public {
+        _mint(msg.sender, 100 * 10 ** decimals());
+    }
     
     
     //Test support for ERC-Charity

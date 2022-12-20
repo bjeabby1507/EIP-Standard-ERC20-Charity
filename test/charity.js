@@ -152,4 +152,21 @@ describe('Compile: Test charity donation configuration ', function() {
         expect(info2[1]).to.equal( 200, "Failed : charity rate should be set to 200 (2%)");
 
     });
+
+    it("Charity list (add/delete) test ", async function () {
+        await charity.addToWhitelist(charity1.address);
+        await charity.addToWhitelist(charity3.address);
+
+        listAddr = await charity.getAllWhitelistedAddresses();
+        console.log(listAddr);
+
+        await charity.deleteFromWhitelist(charity1.address);
+        console.log( await charity.getAllWhitelistedAddresses());
+
+        await charity.deleteFromWhitelist(charity2.address);
+        console.log( await charity.getAllWhitelistedAddresses());
+
+        await charity.deleteFromWhitelist(charity3.address);
+        console.log( await charity.getAllWhitelistedAddresses());
+    });
 });
