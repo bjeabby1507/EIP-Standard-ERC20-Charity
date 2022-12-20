@@ -7,11 +7,12 @@ services:
     build:
       context: .
       target: development
+      dockerfile: Dockerfile
     volumes:
       - ./src:/app/src
     ports:
       - 3000:3000
-    env_file: .env
+    env_file: ./.env
     environment: 
       - REACT_APP_CONTRACT
 

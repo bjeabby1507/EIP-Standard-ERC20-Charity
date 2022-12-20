@@ -161,8 +161,8 @@ In order to run this container you'll need docker installed.
 Let's start our react app
 
 ```sh
-cd reactapp
-docker-compose -f docker-compose.dev.yml up
+cd app
+npm run dev
 #or
 docker-compose -f docker-compose.dev.yml up # add -d flag to run in daemon mode
 
