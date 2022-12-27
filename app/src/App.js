@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { ethers } from "ethers";
 import { ABI, Contract } from './config';
 
@@ -89,6 +89,7 @@ function App() {
     // update account, will cause component re-render
 	const accountChangedHandler = (newAccount) => {
 		SetAddress(newAccount);
+        window.location.reload();
 	};
 
     // reload the page to avoid any errors with chain change mid use of application
@@ -96,22 +97,28 @@ function App() {
 		window.location.reload();
 	};
 
-    const submitForm = async (e: any) => {
+    const submitForm = async (e) => {
         e.preventDefault();
     };
 
+    useEffect(() => {
+        isConnected();
+    }, []);
+
     // Connexion avec une extension web3
-    async function Connexion(){
+    async function isConnected(){
         console.log('Start Connexion with Metamask Wallet');
         // Cherche s'il y a une extension web3
         if(window.ethereum){
             console.log('Metamask Detected');
+            let account;
             try{
                 // Demande la connexion du site avec l'extension web3
                 await window.ethereum.request({
                     method: "eth_requestAccounts",
                 }).then( result => {
-                    accountChangedHandler(result[0]);
+                    account = result[0];
+                    SetAddress(account);
                     setConnButtonText('Wallet Connected');
                 }).catch(err => {
                     //setErrorMessage(err.message);
@@ -134,7 +141,7 @@ function App() {
                     const owner =  await contract.owner();
                     const name = await contract.name();
                     const decimals = await contract.decimals();
-                    const isAd =(owner.toUpperCase() === myAddress.toUpperCase());
+                    const isAd =(owner.toUpperCase() === account.toUpperCase());
 
                     const charity1="0x136E66848623b92B925716c2Add523F81d49744B";
                     const charity2="0xA9Cc05f7E13d3ba7d8145102D771FB9066DB6C5c";
@@ -143,7 +150,7 @@ function App() {
                     console.log(ABI.abi);
                     console.log(contract);
                     console.log("owner : ",owner.toUpperCase(), typeof owner);
-                    console.log("myAddress : ",myAddress.toUpperCase(), typeof myAddress);
+                    console.log("account : ",account.toUpperCase(), typeof account);
                     console.log("isAdmin : ", isAd);
                     console.log("name : ", name);
                     console.log("decimals : ",decimals);
@@ -165,6 +172,74 @@ function App() {
                     //return;
                 }
             } catch (error) {
+                setConnButtonText('Connect Wallet');
+                alert('You are not connected to your browser wallet.');
+                //setErrorMessage(error.message);
+                console.log(error);
+                console.log('Not Connected');
+            }
+        }
+        else{
+            console.log('Metamask not Detected');
+            alert('Metamask not Detected');
+            //setErrorMessage('Please install MetaMask browser extension to interact');
+        }
+    }
+    // Connexion avec une extension web3
+    async function Connexion(){
+        // Cherche s'il y a une extension web3
+        if(window.ethereum){
+            let account;
+            try{
+                // Demande la connexion du site avec l'extension web3
+                await window.ethereum.request({
+                    method: "eth_requestAccounts",
+                }).then( result => {
+                    account = result[0];
+                    accountChangedHandler(account);
+                    setConnButtonText('Wallet Connected');
+                }).catch(err => {
+                    //setErrorMessage(err.message);
+                });
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const Network = await provider.getNetwork(); // avoir le réseau
+                const chainId = Network.chainId; // avoir le numéro du réseau
+                const chain = Network.name; // avoir le nom du réseau
+                // affectation des valeurs
+                SetChainId(chain);
+                SetChainNumber(chainId);
+                
+                try{
+                    // Setcontract: affecte à Tokencontract les infos du Contrat pour pouvoir l'appeler
+                    let contract = new ethers.Contract(Contract.toString(),ABI.abi, provider.getSigner());
+                    const owner =  await contract.owner();
+                    const name = await contract.name();
+                    const decimals = await contract.decimals();
+                    const isAd =(owner.toUpperCase() === account.toUpperCase());
+
+                    const charity1="0x136E66848623b92B925716c2Add523F81d49744B";
+                    const charity2="0xA9Cc05f7E13d3ba7d8145102D771FB9066DB6C5c";
+                    const user2="0x72058A90D1e227c3f7d81F79bd3c43361A7fbBa0";
+                    
+                    //set
+                    Setcontract(contract);
+                    SetOwner(owner);
+                    setIsAdmin(isAd);
+                    
+                    SetTokenName(name);
+                    SetDecimals(decimals);
+                    SetCharity1(charity1);
+                    SetCharity2(charity2);
+                    Setuser2(user2);
+                }catch (e) {
+                    
+                    console.log("Error getting contract");
+                    console.log(e);
+                    alert('Something went wrong with the contrcat.');
+                    //return;
+                }
+            } catch (error) {
+                setConnButtonText('Connect Wallet');
                 alert('You are not connected to your browser wallet.');
                 //setErrorMessage(error.message);
                 console.log(error);
@@ -200,7 +275,7 @@ function App() {
         }
     }
 
-    //mint token
+    //mint token (Owner)
     async function Mint(){
         setShowSign(true);
         setShowDialog(true);
@@ -214,6 +289,25 @@ function App() {
 
         }catch (error) {
             alert('Something went wrong with the mint transaction');
+            //setErrorMessage(error.message);
+            console.log(error);
+
+            RemoveDialog();
+        }
+    }
+
+    //mint token (Selfmint)
+    async function SelfMint(){
+        setShowSign(true);
+        setShowDialog(true);
+        setMined(false);
+        try{
+            let transaction = await Tokencontract.selfmint();
+
+            SetDialog(transaction);
+
+        }catch (error) {
+            alert('Something went wrong with the selfmint transaction');
             //setErrorMessage(error.message);
             console.log(error);
 
@@ -528,6 +622,9 @@ function App() {
                     ))}
                     <TableRow>
                         <TableCell align="center" colSpan={2}><Button variant="outlined" color="primary" onClick={GetTotalSupply}>Total Supply</Button></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell align="center" colSpan={2}><Button variant="outlined" color="success" onClick={SelfMint}>Self Mint</Button></TableCell>
                     </TableRow>
                     </TableBody>
                 </Table>
