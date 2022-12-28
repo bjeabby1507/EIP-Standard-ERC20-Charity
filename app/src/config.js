@@ -361,6 +361,19 @@ export const ABI ={ abi :
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",

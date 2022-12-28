@@ -97,6 +97,12 @@ abstract contract ERC20Charity is IERC20charity, ERC20, Ownable {
         return whitelistedAddresses;
     }
 
+    /// @notice Display for a user the rate of the default charity address that will receive donation.
+    /// @return The default rate of the registered address for the user.
+    function getRate() external view returns (uint256) {
+        return _donation[msg.sender][_defaultAddress[msg.sender]];
+    }
+
     /**
      *@notice Set for a user a default charity address that will receive donation.
      * The default rate specified in {whitelistedRate} will be applied.

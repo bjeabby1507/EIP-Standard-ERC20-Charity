@@ -121,6 +121,11 @@ interface IERC20charity is IERC165 {
     function getAllWhitelistedAddresses() external ;
 
     /**
+    *@notice Display for a user the rate of the default charity address that will receive donation.
+     */
+    function getRate() external view returns (uint256);
+
+    /**
     *@notice Set personlised rate for charity address in {whitelistedRate}.
     * @dev Requirements:
      *
@@ -246,6 +251,10 @@ Remove the address from the whitelist and set rate to the default rate.
 #### **getAllWhitelistedAddresses**
 
 Get all registered charity addresses.
+
+#### **getRate**
+
+Display for a user the rate of the default charity address that will receive donation.
 
 #### **setSpecificRate**
 

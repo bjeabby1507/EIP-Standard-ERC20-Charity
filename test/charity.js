@@ -103,6 +103,7 @@ describe('Compile: Test charity donation configuration ', function() {
         
         //activate donnation and transfer
         await charity.connect(user).setSpecificDefaultAddressAndRate(charity1.address,20); //rate is reset to 2% for charity1
+        console.log("custom rate changed", (await charity.connect(user).getRate()).toString());
         await charity.connect(user).transfer(user2.address,amnt);
 
         //console.log("user 1 balance: " + (await charity.balanceOf(user.address)/ (10 ** decimals)));
