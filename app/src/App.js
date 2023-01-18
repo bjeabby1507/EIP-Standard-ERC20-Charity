@@ -169,7 +169,7 @@ function App() {
                     const decimals = await contract.decimals();
                     const isAd = (owner.toUpperCase() === account.toUpperCase());
 
-                    const user2 = "0x72058A90D1e227c3f7d81F79bd3c43361A7fbBa0";
+                    const user2 = "0x0591F951415Dc471Aa948A49E9Fe752ACB028E9B";
                     handleAdresses();
                     
                     console.log(ABI.abi);
