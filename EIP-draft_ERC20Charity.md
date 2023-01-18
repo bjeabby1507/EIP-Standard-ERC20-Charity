@@ -1,31 +1,27 @@
 ---
-eip: <to be assigned>
-title: ERC20 Charity
-description:  Extension of ERC20 Token that can be partially donated to a charity project
+eip: 6353
+title: Charity token
+description: Extension of EIP-20 Token that can be partially donated to a charity project
 author: Aubay <blockchain-team@aubay.com>, BOCA Jeabby (@bjeabby1507), EL MERSHATI Laith (@lth-elm), KEMP Elia (@eliakemp)
-discussions-to: <URL>
+discussions-to: https://ethereum-magicians.org/t/erc20-charity-token/12617
 status: Draft
-type: Standard Track
+type: Standards Track
 category: ERC
 created: 2022-05-13
 requires: 20
 ---
 
-## Simple Summary
-
-An extension to the [ERC-20](/EIPS/eip-20) standard token that allows Token owners to donate to some charity organization.
-
 ## Abstract
 
-The following standard allows for the implementation of the standard token to enforce charity donation by default. This standard is an extension of the [ERC-20](/EIPS/eip-20) token to provide transfers to a third-party charity during transactions. This standard also allows token that support [ERC-20](/EIPS/eip-20) interface, to have a standardized way of signalling charity information, registered by the token contract.
+An extension to the [EIP-20](./eip-20.md) standard token that allows Token owners to donate to some charity organization. The following standard allows for the implementation of the standard token to enforce charity donation by default. This standard is an extension of the [EIP-20](./eip-20.md) token to provide transfers to a third-party charity during transactions. This standard also allows token that support [EIP-20](./eip-20.md) interface, to have a standardized way of signalling charity information, registered by the token contract.
 
 ## Motivation
 
-The initial idea is to allow Token owners to easily donate passively, in order to facilitate contributions to non-profit organizations and facilitate integration by giving a generalized implementation. Users can make an impact with their token and can contribute to achieving sustainable blockchain development. It is the possibility to donate simply with micro-donation during transactions. Projects can easily retrieve charity donations addresses and rate for a given [ERC-20](/EIPS/eip-20) token, token holders can compare minimum rate donation offers allowed by token contract owners.
+The initial idea is to allow Token owners to easily donate passively, in order to facilitate contributions to non-profit organizations and facilitate integration by giving a generalized implementation. Users can make an impact with their token and can contribute to achieving sustainable blockchain development. It is the possibility to donate simply with micro-donation during transactions. Projects can easily retrieve charity donations addresses and rate for a given [EIP-20](./eip-20.md) token, token holders can compare minimum rate donation offers allowed by token contract owners.
 
 ## Specification
 
-**ERC-20 compliant contract MAY implement this ERC for automatizing Mirco payment during transactions.**
+**EIP-20 compliant contract MAY implement this ERC for automatizing Mirco payment during transactions.**
 
 The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in RFC 2119.
 
@@ -166,14 +162,14 @@ interface IERC20charity is IERC165 {
     *@notice Display for a user the default charity address that will receive donation. 
     * The default rate specified in {whitelistedRate} will be applied.
      */
-    function SpecificDefaultAddress() external view returns (
+    function specificDefaultAddress() external view returns (
         address defaultAddress
     );
 
     /**
     *@notice Delete The Default Address and so deactivate donnations .
      */
-    function DeleteDefaultAddress() external;
+    function deleteDefaultAddress() external;
 }
 
 interface IERC165 {
@@ -188,7 +184,7 @@ interface IERC165 {
 
 ```
 
-To create and deploy an ERC20Charity contract one MAY only inherit directly from this [ERC-20](/EIPS/eip-20) extension that would directly signal support for ERC20Charity :
+To create and deploy an `ERC20Charity` contract one MAY only inherit directly from this [EIP-20](./eip-20.md) extension that would directly signal support for `ERC20Charity` :
 
 ```solidity
 pragma solidity ^0.8.4;
@@ -209,8 +205,8 @@ import "@openzeppelin/contracts/interfaces/IERC165.sol";
 
 bytes4 private constant _INTERFACE_ID_ERCcharity = type(IERC20charity).interfaceId; // 0x557512b6
 
-function checkInterface(address _contract) external returns (bool) {
-    (bool success) = IERC165(_contract).supportsInterface(_INTERFACE_ID_ERCcharity);
+function checkInterface(address testContract) external returns (bool) {
+    (bool success) = IERC165(testContract).supportsInterface(_INTERFACE_ID_ERCcharity);
     return success;
 }
 ```
@@ -290,11 +286,11 @@ Set for a user a default charity address that will receive donations. The rate i
 | whitelistedAddr | The address to set as default. |
 | rate  | The personalized rate for donation.
 
-#### **SpecificDefaultAddress**
+#### **specificDefaultAddress**
 
 Display for a user the default charity address that will receive donations. The default rate specified in {whitelistedRate} will be applied.
 
-#### **DeleteDefaultAddress**
+#### **deleteDefaultAddress**
 
 Delete The Default Address and so deactivate donations.
 
@@ -318,20 +314,19 @@ The donation is a percentage-based rate model, but the calculation can be done d
 
 ## Backwards Compatibility
 
-There are no backward compatibility issues, this implementation is an extension of the functionality of [ERC-20](/EIPS/eip-20). This EIP is fully backward compatible and introduces new functionality retaining the core interfaces and functionality of the [ERC-20](/EIPS/eip-20) standard.
+There are no backward compatibility issues, this implementation is an extension of the functionality of [EIP-20](./eip-20.md). This EIP is fully backward compatible and introduces new functionality retaining the core interfaces and functionality of the [EIP-20](./eip-20.md) standard.
 
 ## Test Cases
 
-*Test cases for an implementation are mandatory for EIPs that are affecting consensus changes.  If the test suite is too large to reasonably be included inline, then consider adding it as one or more files in `../assets/eip-####/`.*
+Tests can be found under [test/](../assets/eip-6353/test/) folder.
 
 ## Reference Implementation
 
-*An optional section that contains a reference/example implementation that people can use to assist in understanding or implementing this specification.  If the implementation is too large to reasonably be included inline, then consider adding it as one or more files in `../assets/eip-####/`.*
-The reference implementation of the standard can be found [here]().
+The reference implementation of the standard can be found under [contracts/](../assets/eip-6353/contracts/) folder.
 
 ## Security Considerations
 
-There are no security considerations related directly to the implementation of this standard. It is to the discretion of the owner of the contract to review charity addresses before whitelisting them and to the token holders to determine whether setting this address as the `_defaultAddress` that will receive donations or not.
+There are no security considerations related directly to the implementation of this standard. It is to the discretion of the owner of the contract to review charity addresses before whitelisting them and to the token holders to determine whether setting this address as the `_defaultAddress` that will receive donations or not. Discussion with reviewers can still be found at `https://ethereum-magicians.org/t/erc20-charity-token/12617`.
 
 ## Copyright
 
