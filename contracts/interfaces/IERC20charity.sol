@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.0;
 //import "./IERC165.sol";
 import "@openzeppelin/contracts/interfaces/IERC165.sol";
 
@@ -126,12 +126,12 @@ interface IERC20charity is IERC165 {
     *@notice Display for a user the default charity address that will receive donation. 
     * The default rate specified in {whitelistedRate} will be applied.
      */
-    function SpecificDefaultAddress() external view returns (
+    function specificDefaultAddress() external view returns (
         address defaultAddress
     );
 
     /**
     *@notice Delete The Default Address and so deactivate donnations .
      */
-    function DeleteDefaultAddress() external;
+    function deleteDefaultAddress() external;
 }

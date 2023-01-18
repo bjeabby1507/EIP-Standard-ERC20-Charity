@@ -44,12 +44,12 @@ describe('Compile: Test charity donation configuration ', function() {
     });
 
     it("User: custom rate for default charity ", async function () {
-        expect(await charity.connect(user).SpecificDefaultAddress()).to.equal('0x0000000000000000000000000000000000000000',"The address isn't set yet it should be 0x0000000000000000000000000000000000000000 ");
-        //console.log("default charity adress" , await charity.connect(user).SpecificDefaultAddress());
+        expect(await charity.connect(user).specificDefaultAddress()).to.equal('0x0000000000000000000000000000000000000000',"The address isn't set yet it should be 0x0000000000000000000000000000000000000000 ");
+        //console.log("default charity adress" , await charity.connect(user).specificDefaultAddress());
         //set
         await charity.connect(user).setSpecificDefaultAddressAndRate(charity1.address,20); //rate is set to 2% for charity1
-        expect(await charity.connect(user).SpecificDefaultAddress()).to.equal(charity1.address,"The address isn't set to charity1 ");
-        //console.log("default charity adress" , await charity.connect(user).SpecificDefaultAddress());
+        expect(await charity.connect(user).specificDefaultAddress()).to.equal(charity1.address,"The address isn't set to charity1 ");
+        //console.log("default charity adress" , await charity.connect(user).specificDefaultAddress());
     });
 
     it("Fails: User Whitelist a charity address that is not whitelisted ", async function () {
@@ -87,8 +87,8 @@ describe('Compile: Test charity donation configuration ', function() {
 
     it("User: User deactivate/activate donation", async function () {
         //deactivate donnation
-        await charity.connect(user).DeleteDefaultAddress();
-        expect(await charity.connect(user).SpecificDefaultAddress()).to.equal( '0x0000000000000000000000000000000000000000', "Failed : address shloud be null");
+        await charity.connect(user).deleteDefaultAddress();
+        expect(await charity.connect(user).specificDefaultAddress()).to.equal( '0x0000000000000000000000000000000000000000', "Failed : address shloud be null");
 
         //try to transfer now
         const amount_send= 100;

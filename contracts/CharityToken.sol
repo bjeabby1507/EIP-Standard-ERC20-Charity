@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.0;
 
 import "./ERC20Charity.sol";
 
@@ -35,10 +35,10 @@ contract CharityToken is ERC20Charity{
     
     
     //Test support for ERC-Charity
-    bytes4 private constant _INTERFACE_ID_ERCcharity = type(IERC20charity).interfaceId; // 0x557512b6
+    bytes4 private constant _INTERFACE_ID_ERC_CHARITY = type(IERC20charity).interfaceId; // 0x557512b6
     //bytes4 private constant _INTERFACE_ID_ERCcharity =type(IERC165).interfaceId; // ERC165S
-    function checkInterface(address _contract) external returns (bool) {
-    (bool success) = IERC165(_contract).supportsInterface(_INTERFACE_ID_ERCcharity);
+    function checkInterface(address testContract) external view returns (bool) {
+    (bool success) = IERC165(testContract).supportsInterface(_INTERFACE_ID_ERC_CHARITY);
     return success;
     }
 

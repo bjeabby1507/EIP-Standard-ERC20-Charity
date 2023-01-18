@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -17,7 +17,7 @@ import "./interfaces/IERC20charity.sol";
 
 abstract contract ERC20Charity is IERC20charity, ERC20, Ownable {
     mapping(address => uint256) public whitelistedRate; //Keep track of the rate for each charity address
-    mapping(address => uint256) internal _indexOfAddresses;
+    mapping(address => uint256) internal indexOfAddresses;
     mapping(address => mapping(address => uint256)) private _donation; //Keep track of the desired rate to donate for each user
     mapping(address => address) private _defaultAddress; //keep track of each user's default charity address
 
@@ -58,10 +58,10 @@ abstract contract ERC20Charity is IERC20charity, ERC20, Ownable {
      * @param toAdd The address to whitelist.
      */
     function addToWhitelist(address toAdd) external virtual onlyOwner {
-        if (_indexOfAddresses[toAdd] == 0) {
+        if (indexOfAddresses[toAdd] == 0) {
             whitelistedRate[toAdd] = _defaultRate();
             whitelistedAddresses.push(toAdd);
-            _indexOfAddresses[toAdd] = whitelistedAddresses.length;
+            indexOfAddresses[toAdd] = whitelistedAddresses.length;
         }
 
         emit AddedToWhitelist(toAdd);
@@ -76,16 +76,16 @@ abstract contract ERC20Charity is IERC20charity, ERC20, Ownable {
      * @param toRemove The address to remove from whitelist.
      */
     function deleteFromWhitelist(address toRemove) external virtual onlyOwner {
-        uint256 index1 = _indexOfAddresses[toRemove];
+        uint256 index1 = indexOfAddresses[toRemove];
         require(index1 > 0, "Invalid index"); //Indexing starts at 1, 0 is not allowed
         // move the last item into the index being vacated
         address lastValue = whitelistedAddresses[
             whitelistedAddresses.length - 1
         ];
         whitelistedAddresses[index1 - 1] = lastValue; // adjust for 1-based indexing
-        _indexOfAddresses[lastValue] = index1;
+        indexOfAddresses[lastValue] = index1;
         whitelistedAddresses.pop();
-        _indexOfAddresses[toRemove] = 0;
+        indexOfAddresses[toRemove] = 0;
 
         delete whitelistedRate[toRemove]; //whitelistedRate[toRemove] =0;
         emit RemovedFromWhitelist(toRemove);
@@ -197,7 +197,7 @@ abstract contract ERC20Charity is IERC20charity, ERC20, Ownable {
      *@notice Display for a user the default charity address that will receive donation.
      * The default rate specified in {whitelistedRate} will be applied.
      */
-    function SpecificDefaultAddress() external view virtual returns (address) {
+    function specificDefaultAddress() external view virtual returns (address) {
         return _defaultAddress[msg.sender];
     }
 
@@ -218,7 +218,7 @@ abstract contract ERC20Charity is IERC20charity, ERC20, Ownable {
     /**
      *@notice Delete The Default Address and so deactivate donnations .
      */
-    function DeleteDefaultAddress() external virtual {
+    function deleteDefaultAddress() external virtual {
         _defaultAddress[msg.sender] = address(0);
         emit DonnationAddressChanged(address(0));
     }
