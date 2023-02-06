@@ -376,7 +376,7 @@ function App() {
     async function GetRate(address) {
         try {
             const rate = await Tokencontract.whitelistedRate(address);
-            const charity = await Tokencontract.SpecificDefaultAddress();
+            const charity = await Tokencontract.specificDefaultAddress();
             const customRate = (await Tokencontract.getRate()/ 100).toString();
             const defaultrate = (await Tokencontract.whitelistedRate(charity)/ 100).toString();
             // console.log((rate / 100).toString());
