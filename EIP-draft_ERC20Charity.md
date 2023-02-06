@@ -1,7 +1,7 @@
 ---
 eip: 6353
 title: Charity token
-description: Extension of EIP-20 Token that can be partially donated to a charity project
+description: Extension of EIP-20 token that can be partially donated to a charity project
 author: Aubay <blockchain-team@aubay.com>, BOCA Jeabby (@bjeabby1507), EL MERSHATI Laith (@lth-elm), KEMP Elia (@eliakemp)
 discussions-to: https://ethereum-magicians.org/t/erc20-charity-token/12617
 status: Draft
@@ -13,15 +13,13 @@ requires: 20
 
 ## Abstract
 
-An extension to the [EIP-20](./eip-20.md) standard token that allows Token owners to donate to some charity organization. The following standard allows for the implementation of the standard token to enforce charity donation by default. This standard is an extension of the [EIP-20](./eip-20.md) token to provide transfers to a third-party charity during transactions. This standard also allows token that support [EIP-20](./eip-20.md) interface, to have a standardized way of signalling charity information, registered by the token contract.
+An extension to [EIP-20](./eip-20.md) that can automatically send an additional percentage of each transfer to a third party, and that provides an interface for retrieving this information. This can allow token owners to make donations to a charity with every transfer. This can also be used to allow automated savings programs.
 
 ## Motivation
 
-The initial idea is to allow Token owners to easily donate passively, in order to facilitate contributions to non-profit organizations and facilitate integration by giving a generalized implementation. Users can make an impact with their token and can contribute to achieving sustainable blockchain development. It is the possibility to donate simply with micro-donation during transactions. Projects can easily retrieve charity donations addresses and rate for a given [EIP-20](./eip-20.md) token, token holders can compare minimum rate donation offers allowed by token contract owners.
+There are charity organizations with addresses on-chain, and there are token holders who want to make automated donations. Having a standardized way of collecting and managing these donations helps users and user interface developers. Users can make an impact with their token and can contribute to achieving sustainable blockchain development. Projects can easily retrieve charity donations addresses and rate for a given [EIP-20](./eip-20.md) token, token holders can compare minimum rate donation offers allowed by token contract owners. This standard provides functionality that allows token holders to donate easily.
 
 ## Specification
-
-**EIP-20 compliant contract MAY implement this ERC for automatizing Mirco payment during transactions.**
 
 The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in RFC 2119.
 
@@ -29,26 +27,22 @@ Owner of the contract **MAY**, after review, register charity address in `whitel
 
 Token holders **MAY** choose and specify a default charity address from `_defaultAddress`, this address **SHOULD** be different from the null address for the donation to be activated.
 
-Token holders **MAY** choose a donation rate different from the default one, individually for a specific charity address, by modifying the rate in `_donation`.
+The donation is a percentage-based rate model, but the calculation can be done differently. Applications and individuals can implement this standard by retrieving information with `charityInfo()` , which specifies an assigned rate for a given address.
 
-Donations are calculated as a percentage of the amount of token transfered, this percentage is added to the initial amount of token transferred. `_feeDenominator()` is overridable but defaults to 10000, meaning the rate is specified in basis points by default but **MAY** be customizable just as the `_defaultRate()` that default to 10.
+This standard provides functionality that allows token holders to donate easily. The donation when activated is done directly in the overridden `transfer`, `transferFrom`, and `approve` functions.
+
+When `transfer`, `transferFrom` are called the sender's balance is reduced by the initial amount and a donation amount is deduced. The initial transfered amount is transferred to the recipient's balance and an additional donation amount is transfered to a third party (charity). The two transfer are done at the same time and emit two `Transfer` events.
+Also, if the account has an insufficient balance to cover the transfer and the donation the whole transfer would revert.
 
 ```solidity
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.4;
-//import "./IERC165.sol";
-import "@openzeppelin/contracts/interfaces/IERC165.sol";
 
 ///
 /// @dev Required interface of an ERC20 Charity compliant contract.
 ///
 interface IERC20charity is IERC165 {
-    /// ERC165 bytes to add to interface array - set in parent contract
-    /// implementing this standard
-    ///
-    ///type(IERC20charity).interfaceId.interfaceId == 0x557512b6
-    /// bytes4 private constant _INTERFACE_ID_ERCcharity = 0x557512b6;
-    /// _registerInterface(_INTERFACE_ID_ERCcharity);
+    /// The EIP-165 identifier for this interface is 0x557512b6
 
     
     /**
@@ -150,7 +144,7 @@ interface IERC20charity is IERC165 {
     * @dev Requirements:
      *
      * - `whitelistedAddr` cannot be the zero address.
-     * - `rate` cannot be inferior to the default rate 
+     * - `rate` cannot be less than to the default rate 
      * or to the rate specified by the owner of this contract in {whitelistedRate}.
      *
      * @param whitelistedAddr The address to set as default.
@@ -171,58 +165,6 @@ interface IERC20charity is IERC165 {
      */
     function deleteDefaultAddress() external;
 }
-
-interface IERC165 {
-    /// @notice Query if a contract implements an interface
-    /// @param interfaceID The interface identifier, as specified in ERC-165
-    /// @dev Interface identification is specified in ERC-165. This function
-    ///  uses less than 30,000 gas.
-    /// @return `true` if the contract implements `interfaceID` and
-    ///  `interfaceID` is not 0xffffffff, `false` otherwise
-    function supportsInterface(bytes4 interfaceID) external view returns (bool);
-}
-
-```
-
-To create and deploy an `ERC20Charity` contract one MAY only inherit directly from this [EIP-20](./eip-20.md) extension that would directly signal support for `ERC20Charity` :
-
-```solidity
-pragma solidity ^0.8.4;
-import "./ERC20Charity.sol";
-
-contract CharityToken is ERC20Charity {
-    // ...
-    constructor() ERC20("TestToken", "TST") { }
-    // ...
-}
-```
-
-checking if a contract implement this specification can be done with :
-
-```solidity
-//import "./IERC165.sol";
-import "@openzeppelin/contracts/interfaces/IERC165.sol";
-
-bytes4 private constant _INTERFACE_ID_ERCcharity = type(IERC20charity).interfaceId; // 0x557512b6
-
-function checkInterface(address testContract) external returns (bool) {
-    (bool success) = IERC165(testContract).supportsInterface(_INTERFACE_ID_ERCcharity);
-    return success;
-}
-```
-
-```solidity
-    mapping(address => uint256) public whitelistedRate; 
-    mapping(address =>  mapping(address => uint256)) private _donation; 
-    mapping (address =>address) private _defaultAddress; 
-
-    address[] whitelistedAddresses; //Addresses whitelisted
-
-    event AddedToWhitelist (address toAdd);
-    event RemovedFromWhitelist (address toRemove);
-    event DonnationAddressChanged (address whitelistedAddr);
-    event DonnationAddressAndRateChanged (address whitelistedAddr,uint256 rate);
-    event ModifiedCharityRate(address whitelistedAddr,uint256 rate)
 
 ```
 
@@ -261,14 +203,6 @@ Set personalized rate for charity address in {whitelistedRate}.
 | whitelistedAddr | The address to set as default. |
 | rate  | The personalised rate for donation. |
 
-#### **_returnRate**
-
-Return the rate to donate.
-
-| Parameter | Description |
-| ---------|-------------|
-| from | The address to get the rate of donation.
-
 #### **setSpecificDefaultAddress**
 
 Set for a user a default charity address that will receive donations. The default rate specified in {whitelistedRate} will be applied.
@@ -304,29 +238,27 @@ Called with the charity address to determine if the contract whitelisted the add
 
 ## Rationale
 
-This standard provides functionality that allows token holders to donate easily. The donation when activated is done directly in the overridden `transfer`, `transferFrom`, and `approve` functions.
+ This EIP chooses to whitelist charity addresses by using an array and keeping track of the "active" status with a mapping `whitelistedRate` to allow multiple choice of recipient and for transparence. The donation address can also be a single address chosen by the owner of the contract and modified by period.
 
-The donation is a percentage-based rate model, but the calculation can be done differently. Also, donations could be in other functions than the `transfer` function.
+ If the sender balance is insuficent i.e total amount of token (initial transfer + donation) is insuficent the transfer would revert. Donation are done in the `transfer` function to simplify the usage and to not add an additional function, but the implementation could be donne differently, and for exemple allow a transfer to go through without the donation amount when donation is activated. The token implementer can also choose to store the donation in the contract or in another one and add a withdrawal or claimable function, so the charity can claim the allocated amount of token themselves, the additional transfer will be triggered by the charity and not the token holder.
 
- To manage the whitelist the owner of the contract can choose to whitelist charity addresses by using an array and keeping track of the "active" status with a mapping. The donation address can also be a single address chosen by the owner of the contract and modified by period.
-
- They can also choose to store the donation in the contract or in another and add a withdrawal or claimable function so the charity can claim the allocated amount of token themselves, so the transfer function will be triggered by the charity and not the token holder.
+ Also, donations amount are calculated here as a percentage of the amount of token transfered to allow different case scenario, but the token implementer can decide to opt for another approach instead like rounding up the transaction value.
 
 ## Backwards Compatibility
 
-There are no backward compatibility issues, this implementation is an extension of the functionality of [EIP-20](./eip-20.md). This EIP is fully backward compatible and introduces new functionality retaining the core interfaces and functionality of the [EIP-20](./eip-20.md) standard.
+This implementation is an extension of the functionality of [EIP-20](./eip-20.md), it introduces new functionality retaining the core interfaces and functionality of the [EIP-20](./eip-20.md) standard. There is a small backwards compatibility issue, indeed if an account has insufficient balance, it's possible for the transfer to fail.
 
 ## Test Cases
 
-Tests can be found under [test/](../assets/eip-6353/test/) folder.
+Tests can be found in [`charity.js`](../assets/eip-6353/test/charity.js).
 
 ## Reference Implementation
 
-The reference implementation of the standard can be found under [contracts/](../assets/eip-6353/contracts/) folder.
+The reference implementation of the standard can be found under [`contracts/`](../assets/eip-6353/contracts/ERC20Charity.sol) folder.
 
 ## Security Considerations
 
-There are no security considerations related directly to the implementation of this standard. It is to the discretion of the owner of the contract to review charity addresses before whitelisting them and to the token holders to determine whether setting this address as the `_defaultAddress` that will receive donations or not. Discussion with reviewers can still be found at `https://ethereum-magicians.org/t/erc20-charity-token/12617`.
+There are no additional security considerations compared to EIP-20.
 
 ## Copyright
 
