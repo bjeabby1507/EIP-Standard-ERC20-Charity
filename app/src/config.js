@@ -155,26 +155,6 @@ export const ABI ={ abi :
       "type": "event"
     },
     {
-      "inputs": [],
-      "name": "DeleteDefaultAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "SpecificDefaultAddress",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
@@ -282,7 +262,7 @@ export const ABI ={ abi :
       "inputs": [
         {
           "internalType": "address",
-          "name": "_contract",
+          "name": "testContract",
           "type": "address"
         }
       ],
@@ -294,7 +274,7 @@ export const ABI ={ abi :
           "type": "bool"
         }
       ],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -331,6 +311,13 @@ export const ABI ={ abi :
           "type": "bool"
         }
       ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "deleteDefaultAddress",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -502,6 +489,19 @@ export const ABI ={ abi :
       "name": "setSpecificRate",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "specificDefaultAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
