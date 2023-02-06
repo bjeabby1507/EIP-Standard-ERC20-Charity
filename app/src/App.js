@@ -582,7 +582,7 @@ function App() {
                         width: 'auto',
                     }}
                 >
-                    <h1 sx={{ width: '100%', fontFamily: 'Monospace' }}>A demonstration of the EIP-XXX : Charity</h1>
+                    <h1 sx={{ width: '100%', fontFamily: 'Monospace' }}>A demonstration of the EIP-6353 : Charity</h1>
                     {/*{isToggleOn ? 'ON' : 'OFF'}*/}
                     <ButtonGroup
                         orientation="vertical"
