@@ -7,19 +7,6 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "address",
-          "name": "toAdd",
-          "type": "address"
-        }
-      ],
-      "name": "AddedToWhitelist",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
           "indexed": true,
           "internalType": "address",
           "name": "owner",
@@ -89,26 +76,7 @@
           "type": "uint256"
         }
       ],
-      "name": "ModifiedCharityRate",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
+      "name": "ModifiedCharityCustumRate",
       "type": "event"
     },
     {
@@ -117,11 +85,17 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "toRemove",
+          "name": "whitelistedAddr",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
-      "name": "RemovedFromWhitelist",
+      "name": "ModifiedCharityRate",
       "type": "event"
     },
     {
@@ -148,19 +122,6 @@
       ],
       "name": "Transfer",
       "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "toAdd",
-          "type": "address"
-        }
-      ],
-      "name": "addToWhitelist",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
     },
     {
       "inputs": [
@@ -248,6 +209,21 @@
           "internalType": "uint256",
           "name": "rate",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "msgRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "RecipientRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "msgRate",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -292,20 +268,7 @@
     },
     {
       "inputs": [],
-      "name": "deleteDefaultAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "toRemove",
-          "type": "address"
-        }
-      ],
-      "name": "deleteFromWhitelist",
+      "name": "deleteRecipient",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -324,13 +287,38 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getRate",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "getRateOf",
       "outputs": [
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "getRecipientAddressOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -374,34 +362,19 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
           "name": "whitelistedAddr",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
-      "name": "setSpecificDefaultAddress",
+      "name": "setCustumRate",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -419,7 +392,20 @@
           "type": "uint256"
         }
       ],
-      "name": "setSpecificDefaultAddressAndRate",
+      "name": "setRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "whitelistedAddr",
+          "type": "address"
+        }
+      ],
+      "name": "setRecipient",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -437,22 +423,9 @@
           "type": "uint256"
         }
       ],
-      "name": "setSpecificRate",
+      "name": "setRecipientAddressAndRate",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "specificDefaultAddress",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -550,19 +523,6 @@
           "type": "bool"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },

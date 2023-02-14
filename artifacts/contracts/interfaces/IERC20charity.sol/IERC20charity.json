@@ -9,19 +9,6 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "toAdd",
-          "type": "address"
-        }
-      ],
-      "name": "AddedToWhitelist",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
           "name": "whitelistedAddr",
           "type": "address"
         },
@@ -64,7 +51,7 @@
           "type": "uint256"
         }
       ],
-      "name": "ModifiedCharityRate",
+      "name": "ModifiedCharityCustumRate",
       "type": "event"
     },
     {
@@ -73,25 +60,18 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "toRemove",
+          "name": "whitelistedAddr",
           "type": "address"
-        }
-      ],
-      "name": "RemovedFromWhitelist",
-      "type": "event"
-    },
-    {
-      "inputs": [
+        },
         {
-          "internalType": "address",
-          "name": "toAdd",
-          "type": "address"
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
-      "name": "addToWhitelist",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "name": "ModifiedCharityRate",
+      "type": "event"
     },
     {
       "inputs": [
@@ -112,6 +92,21 @@
           "internalType": "uint256",
           "name": "defaultRate",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "msgRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "RecipientRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "msgRate",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -119,20 +114,7 @@
     },
     {
       "inputs": [],
-      "name": "deleteDefaultAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "toRemove",
-          "type": "address"
-        }
-      ],
-      "name": "deleteFromWhitelist",
+      "name": "deleteRecipient",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -151,8 +133,14 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getRate",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "getRateOf",
       "outputs": [
         {
           "internalType": "uint256",
@@ -167,62 +155,86 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "whitelistedAddr",
+          "name": "addr",
           "type": "address"
         }
       ],
-      "name": "setSpecificDefaultAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "whitelistedAddr",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "rate",
-          "type": "uint256"
-        }
-      ],
-      "name": "setSpecificDefaultAddressAndRate",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "whitelistedAddr",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "rate",
-          "type": "uint256"
-        }
-      ],
-      "name": "setSpecificRate",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "specificDefaultAddress",
+      "name": "getRecipientAddressOf",
       "outputs": [
         {
           "internalType": "address",
-          "name": "defaultAddress",
+          "name": "RecipientAddress",
           "type": "address"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "whitelistedAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setCustumRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "whitelistedAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "whitelistedAddr",
+          "type": "address"
+        }
+      ],
+      "name": "setRecipient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "whitelistedAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setRecipientAddressAndRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

@@ -24,41 +24,40 @@ describe('Compile: Test charity donation configuration ', function() {
         const amnt = ethers.utils.parseEther(amount_send.toString());
         await charity.mint(user.address,amnt.toString() );
 
-        await charity.addToWhitelist(charity1.address);
+        await charity.addToWhitelist(charity1.address,10);
 
         //console.log((await charity.whitelistedRate(charity1)).toString());
 
         expect(await charity.whitelistedRate(charity1.address)).to.equal( 10, "Failed to store defaultRate");
         
-        await charity.addToWhitelist(charity2.address);
+        await charity.addToWhitelist(charity2.address,10);
     });
 
     it("Owner: custom rate for charity address ", async function () {
 
-        await charity.setSpecificRate(charity2.address,200);
+        await charity.setRate(charity2.address,200);
         expect(await charity.whitelistedRate(charity2.address)).to.equal( 200, "Failed to custom ate");
     });
 
     it("Fails: User Whitelist a charity address ", async function () {
-        await expect(charity.connect(user).addToWhitelist(charity1.address)).to.be.revertedWith( "Ownable: caller is not the owner");
+        await expect(charity.connect(user).addToWhitelist(charity1.address,10)).to.be.revertedWith( "Ownable: caller is not the owner");
     });
 
     it("User: custom rate for default charity ", async function () {
-        expect(await charity.connect(user).specificDefaultAddress()).to.equal('0x0000000000000000000000000000000000000000',"The address isn't set yet it should be 0x0000000000000000000000000000000000000000 ");
-        //console.log("default charity adress" , await charity.connect(user).specificDefaultAddress());
+        expect(await charity.connect(user).getRecipientAddressOf(user.address)).to.equal('0x0000000000000000000000000000000000000000',"The address isn't set yet it should be 0x0000000000000000000000000000000000000000 ");
+        //console.log("default charity adress" , await charity.connect(user).getRecipientAddressOf(user.address));
         //set
-        await charity.connect(user).setSpecificDefaultAddressAndRate(charity1.address,20); //rate is set to 2% for charity1
-        expect(await charity.connect(user).specificDefaultAddress()).to.equal(charity1.address,"The address isn't set to charity1 ");
-        //console.log("default charity adress" , await charity.connect(user).specificDefaultAddress());
+        await charity.connect(user).setRecipientAddressAndRate(charity1.address,20); //rate is set to 2% for charity1
+        expect(await charity.connect(user).getRecipientAddressOf(user.address)).to.equal(charity1.address,"The address isn't set to charity1 ");
+        //console.log("default charity adress" , await charity.connect(user).getRecipientAddressOf(user.address));
     });
 
     it("Fails: User Whitelist a charity address that is not whitelisted ", async function () {
-        await  expect(charity.connect(user).setSpecificDefaultAddressAndRate(charity3.address,20)).to.be.revertedWith( "ERC20Charity: invalid whitelisted address");
+        await  expect(charity.connect(user).setRecipientAddressAndRate(charity3.address,20)).to.be.revertedWith( "ERC20Charity: invalid whitelisted address");
     });
 
     it("Fails: User Whitelist a charity address with an insufficient rate", async function () {
-        await  expect(charity.connect(user).setSpecificDefaultAddressAndRate(charity1.address,5)).to.be.revertedWith( "ERC20Charity: rate fee must exceed default rate");
-        await  expect(charity.connect(user).setSpecificDefaultAddressAndRate(charity2.address,100)).to.be.revertedWith( "ERC20Charity: rate fee must exceed the fee set by the owner");
+        await  expect(charity.connect(user).setRecipientAddressAndRate(charity2.address,100)).to.be.revertedWith( "ERC20Charity: rate fee must exceed the fee set by the owner");
     });
 
     it("User: transfer an amount to charity when token is transferred", async function () {
@@ -87,8 +86,8 @@ describe('Compile: Test charity donation configuration ', function() {
 
     it("User: User deactivate/activate donation", async function () {
         //deactivate donnation
-        await charity.connect(user).deleteDefaultAddress();
-        expect(await charity.connect(user).specificDefaultAddress()).to.equal( '0x0000000000000000000000000000000000000000', "Failed : address shloud be null");
+        await charity.connect(user).deleteRecipient();
+        expect(await charity.connect(user).getRecipientAddressOf(user.address)).to.equal( '0x0000000000000000000000000000000000000000', "Failed : address shloud be null");
 
         //try to transfer now
         const amount_send= 100;
@@ -102,8 +101,8 @@ describe('Compile: Test charity donation configuration ', function() {
         expect(await charity.balanceOf(charity1.address)/ (10 ** decimals)).to.equal( 0.4, "Failed : charity balance should be of 0.4");
         
         //activate donnation and transfer
-        await charity.connect(user).setSpecificDefaultAddressAndRate(charity1.address,20); //rate is reset to 2% for charity1
-        console.log("custom rate changed", (await charity.connect(user).getRate()).toString());
+        await charity.connect(user).setRecipientAddressAndRate(charity1.address,20); //rate is reset to 2% for charity1
+        console.log("custom rate changed", (await charity.connect(user).getRateOf(user.address)).toString());
         await charity.connect(user).transfer(user2.address,amnt);
 
         //console.log("user 1 balance: " + (await charity.balanceOf(user.address)/ (10 ** decimals)));
@@ -155,8 +154,8 @@ describe('Compile: Test charity donation configuration ', function() {
     });
 
     it("Charity list (add/delete) test ", async function () {
-        await charity.addToWhitelist(charity1.address);
-        await charity.addToWhitelist(charity3.address);
+        await charity.addToWhitelist(charity1.address,10);
+        await charity.addToWhitelist(charity3.address,10);
 
         listAddr = await charity.getAllWhitelistedAddresses();
         console.log(listAddr);

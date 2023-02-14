@@ -14,17 +14,6 @@ interface IERC20charity is IERC165 {
     /// bytes4 private constant _INTERFACE_ID_ERCcharity = 0x557512b6;
     /// _registerInterface(_INTERFACE_ID_ERCcharity);
 
-    
-    /**
-     * @dev Emitted when `toAdd` charity address is added to `whitelistedRate`.
-     */
-    event AddedToWhitelist (address toAdd);
-
-    /**
-     * @dev Emitted when `toRemove` charity address is deleted from `whitelistedRate`.
-     */
-    event RemovedFromWhitelist (address toRemove);
-
     /**
      * @dev Emitted when `_defaultAddress` charity address is modified and set to `whitelistedAddr`.
      */
@@ -42,38 +31,29 @@ interface IERC20charity is IERC165 {
     event ModifiedCharityRate(address whitelistedAddr,uint256 rate);
     
     /**
+     * @dev Emitted when `_donation` for `whitelistedAddr` is modified and set to `rate`.
+     */
+    event  ModifiedCharityCustumRate(address whitelistedAddr,uint256 rate);
+
+    /**
     *@notice Called with the charity address to determine if the contract whitelisted the address
     *and if it is the rate assigned.
     *@param addr - the Charity address queried for donnation information.
     *@return whitelisted - true if the contract whitelisted the address to receive donnation
     *@return defaultRate - the rate defined by the contract owner by default , the minimum rate allowed different from 0
+    *@return msgRecipient - msg.sender's donation recipient
+    @return RecipientRate - Recipient's default rate set by owner
+    *@return msgRate - msg.sender’s donation rate
     */
     function charityInfo(
         address addr
     ) external view returns (
         bool whitelisted,
-        uint256 defaultRate
+        uint256 defaultRate,
+        address msgRecipient,
+        uint256 RecipientRate,
+        uint256 msgRate
     );
-
-    /**
-    *@notice Add address to whitelist and set rate to the default rate.
-    * @dev Requirements:
-     *
-     * - `toAdd` cannot be the zero address.
-     *
-     * @param toAdd The address to whitelist.
-     */
-    function addToWhitelist(address toAdd) external;
-
-    /**
-    *@notice Remove the address from the whitelist and set rate to the default rate.
-    * @dev Requirements:
-     *
-     * - `toRemove` cannot be the zero address.
-     *
-     * @param toRemove The address to remove from whitelist.
-     */
-    function deleteFromWhitelist(address toRemove) external;
 
     /**
     *@notice Get all registered charity addresses.
@@ -82,56 +62,70 @@ interface IERC20charity is IERC165 {
 
     /**
     *@notice Display for a user the rate of the default charity address that will receive donation.
-     */
-    function getRate() external view returns (uint256);
+    * @param addr The default rate of the addr.
+    */
+    function getRateOf(address addr) external view returns (uint256);
 
     /**
-    *@notice Set personlised rate for charity address in {whitelistedRate}.
+    *@notice Set rate for charity address in {whitelistedRate}.
     * @dev Requirements:
      *
-     * - `whitelistedAddr` cannot be the zero address.
-     * - `rate` cannot be inferior to the default rate.
+     * - `whitelistedAddr` shouldn't be the zero address.
+     * - `rate` shouldn't be less than to the default rate.
      *
      * @param whitelistedAddr The address to set as default.
      * @param rate The personalised rate for donation.
      */
-    function setSpecificRate(address whitelistedAddr , uint256 rate) external;
+    function setRate(address whitelistedAddr , uint256 rate) external;
+
+    /**
+    *@notice Set personlised rate for charity address in {_donation}.
+    * @dev Requirements:
+     *
+     * - `whitelistedAddr` shouldn't be the zero address.
+     * - `rate` shouldn't be less than to the default rate.
+     *
+     * @param whitelistedAddr The address to set as default.
+     * @param rate The personalised rate for donation.
+     */
+    function setCustumRate(address whitelistedAddr , uint256 rate) external;
 
     /**
     *@notice Set for a user a default charity address that will receive donation. 
     * The default rate specified in {whitelistedRate} will be applied.
     * @dev Requirements:
      *
-     * - `whitelistedAddr` cannot be the zero address.
+     * - `whitelistedAddr` shouldn't be the zero address.
      *
      * @param whitelistedAddr The address to set as default.
      */
-    function setSpecificDefaultAddress(address whitelistedAddr) external;
+    function setRecipient(address whitelistedAddr) external;
 
     /**
     *@notice Set for a user a default charity address that will receive donation. 
     * The rate is specified by the user.
     * @dev Requirements:
      *
-     * - `whitelistedAddr` cannot be the zero address.
-     * - `rate` cannot be inferior to the default rate 
+     * - `whitelistedAddr` shouldn't be the zero address.
+     * - `rate` shouldn't be less than to the default rate. 
      * or to the rate specified by the owner of this contract in {whitelistedRate}.
      *
      * @param whitelistedAddr The address to set as default.
      * @param rate The personalised rate for donation.
      */
-    function setSpecificDefaultAddressAndRate(address whitelistedAddr , uint256 rate) external;
+    function setRecipientAddressAndRate(address whitelistedAddr , uint256 rate) external;
 
     /**
     *@notice Display for a user the default charity address that will receive donation. 
     * The default rate specified in {whitelistedRate} will be applied.
+    * @param addr The address to get donnation rate.
      */
-    function specificDefaultAddress() external view returns (
-        address defaultAddress
+    function getRecipientAddressOf(address addr) external view returns (
+        address RecipientAddress
     );
 
     /**
     *@notice Delete The Default Address and so deactivate donnations .
      */
-    function deleteDefaultAddress() external;
+    function deleteRecipient() external;
 }

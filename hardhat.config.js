@@ -4,6 +4,7 @@ require("hardhat-gas-reporter");
 require("dotenv").config();
 var API_KEY = process.env.API_KEY;
 var PRIVATE_KEY = process.env.PRIVATE_KEY;
+var COINMARKETCAP_API = process.env.COINMARKETCAP_API;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -39,6 +40,8 @@ module.exports = {
   },
   gasReporter: {
     currency: 'USD',
-    gasPrice: 21,
+    // gasPrice: 21,
+    gasPriceApi : "https://api.etherscan.io/api?module=proxy&action=eth_gasPrice",
+    coinmarketcap: COINMARKETCAP_API
   },
 };
