@@ -11,14 +11,14 @@ import "./ERC20Charity.sol";
  */
 
 contract CharityToken is ERC20Charity{
-    address public Owner;
+    address private _owner;
     constructor() ERC20("TestToken", "TST") {
-        Owner = msg.sender;
+        _owner = msg.sender;
         _mint(msg.sender, 10000 * 10 ** decimals());
     }
 
     modifier onlyOwner() {
-        require(msg.sender == Owner, 
+        require(msg.sender == _owner, 
         "Ownable: caller is not the owner");
         _;
     }
@@ -32,6 +32,10 @@ contract CharityToken is ERC20Charity{
      * @dev Emitted when `toRemove` charity address is deleted from `whitelistedRate`.
      */
     event RemovedFromWhitelist (address toRemove);
+
+    function owner() public view virtual returns (address) {
+        return _owner;
+    }
 
     /** @dev Creates `amount` tokens and assigns them to `to`, increasing
      * the total supply.

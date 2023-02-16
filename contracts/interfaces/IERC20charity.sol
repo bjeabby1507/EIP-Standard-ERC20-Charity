@@ -62,7 +62,7 @@ interface IERC20charity is IERC165 {
 
     /**
     *@notice Display for a user the rate of the default charity address that will receive donation.
-    * @param addr The default rate of the addr.
+    * @param addr The addr to check.
     */
     function getRateOf(address addr) external view returns (uint256);
 
@@ -82,13 +82,11 @@ interface IERC20charity is IERC165 {
     *@notice Set personlised rate for charity address in {_donation}.
     * @dev Requirements:
      *
-     * - `whitelistedAddr` shouldn't be the zero address.
      * - `rate` shouldn't be less than to the default rate.
      *
-     * @param whitelistedAddr The address to set as default.
      * @param rate The personalised rate for donation.
      */
-    function setCustumRate(address whitelistedAddr , uint256 rate) external;
+    function setCustumRate( uint256 rate) external;
 
     /**
     *@notice Set for a user a default charity address that will receive donation. 

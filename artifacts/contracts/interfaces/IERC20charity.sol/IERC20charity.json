@@ -173,11 +173,6 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "whitelistedAddr",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "rate",
           "type": "uint256"

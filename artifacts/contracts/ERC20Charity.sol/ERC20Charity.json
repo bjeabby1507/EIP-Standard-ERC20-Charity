@@ -202,12 +202,12 @@
       "outputs": [
         {
           "internalType": "bool",
-          "name": "",
+          "name": "whitelisted",
           "type": "bool"
         },
         {
           "internalType": "uint256",
-          "name": "rate",
+          "name": "defaultRate",
           "type": "uint256"
         },
         {
@@ -363,11 +363,6 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "whitelistedAddr",
-          "type": "address"
-        },
         {
           "internalType": "uint256",
           "name": "rate",

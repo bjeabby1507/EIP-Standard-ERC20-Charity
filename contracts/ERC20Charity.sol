@@ -127,14 +127,11 @@ abstract contract ERC20Charity is IERC20charity, ERC20 {
      *@notice Set personlised rate for charity address in {_donation}.
      * @dev Requirements:
      *
-     * - `whitelistedAddr` shouldn't be the zero address.
      * - `rate` shouldn't be less than to the rate set in {whitelistedRate}.
      *
-     * @param whitelistedAddr The address to set as default.
      * @param rate The personalised rate for donation.
      */
     function setCustumRate(
-        address whitelistedAddr,
         uint256 rate
     ) external virtual {
         require(
@@ -142,15 +139,15 @@ abstract contract ERC20Charity is IERC20charity, ERC20 {
             "ERC20Charity: rate must be between 0 and _feeDenominator"
         );
         require(
-            whitelistedRate[whitelistedAddr] != 0,
-            "ERC20Charity: invalid whitelisted address"
+            _Recipient[msg.sender] != address(0),
+            "ERC20Charity: no registered recipient"
         );
         require(
-            rate >= whitelistedRate[whitelistedAddr],
+            rate >= whitelistedRate[_Recipient[msg.sender]],
             "ERC20Charity: rate fee must exceed the fee set by the owner"
         );
-        _donation[msg.sender][whitelistedAddr] = rate;
-        emit ModifiedCharityCustumRate(whitelistedAddr, rate);
+        _donation[msg.sender][_Recipient[msg.sender]] = rate;
+        emit ModifiedCharityCustumRate(_Recipient[msg.sender], rate);
     }
 
     /**
@@ -179,15 +176,15 @@ abstract contract ERC20Charity is IERC20charity, ERC20 {
      */
     function charityInfo(
         address charityAddr
-    ) external view virtual returns (bool, uint256 rate,address msgRecipient,uint256 RecipientRate, uint256 msgRate) {
-        rate = whitelistedRate[charityAddr];
+    ) external view virtual returns (bool whitelisted, uint256 defaultRate,address msgRecipient,uint256 RecipientRate, uint256 msgRate) {
+        defaultRate = whitelistedRate[charityAddr];
         msgRecipient = _Recipient[msg.sender];
         RecipientRate = whitelistedRate[msgRecipient];
         msgRate = _donation[msg.sender][_Recipient[msg.sender]];
-        if (rate != 0) {
-            return (true, rate, msgRecipient, RecipientRate, msgRate);
+        if (defaultRate != 0) {
+            return (true, defaultRate, msgRecipient, RecipientRate, msgRate);
         } else {
-            return (false, rate, msgRecipient, RecipientRate, msgRate);
+            return (false, defaultRate, msgRecipient, RecipientRate, msgRate);
         }
     }
 
