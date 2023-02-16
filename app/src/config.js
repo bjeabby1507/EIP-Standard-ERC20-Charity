@@ -16,6 +16,12 @@ export const ABI ={ abi :
           "internalType": "address",
           "name": "toAdd",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
       "name": "AddedToWhitelist",
@@ -94,26 +100,26 @@ export const ABI ={ abi :
           "type": "uint256"
         }
       ],
-      "name": "ModifiedCharityRate",
+      "name": "ModifiedCharityCustumRate",
       "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
+          "indexed": false,
           "internalType": "address",
-          "name": "previousOwner",
+          "name": "whitelistedAddr",
           "type": "address"
         },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
-      "name": "OwnershipTransferred",
+      "name": "ModifiedCharityRate",
       "type": "event"
     },
     {
@@ -160,6 +166,11 @@ export const ABI ={ abi :
           "internalType": "address",
           "name": "toAdd",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
       "name": "addToWhitelist",
@@ -246,12 +257,27 @@ export const ABI ={ abi :
       "outputs": [
         {
           "internalType": "bool",
-          "name": "",
+          "name": "whitelisted",
           "type": "bool"
         },
         {
           "internalType": "uint256",
-          "name": "rate",
+          "name": "defaultRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "msgRecipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "RecipientRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "msgRate",
           "type": "uint256"
         }
       ],
@@ -315,13 +341,6 @@ export const ABI ={ abi :
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "deleteDefaultAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
@@ -330,6 +349,13 @@ export const ABI ={ abi :
         }
       ],
       "name": "deleteFromWhitelist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "deleteRecipient",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -348,13 +374,38 @@ export const ABI ={ abi :
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getRate",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "getRateOf",
       "outputs": [
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "getRecipientAddressOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -430,13 +481,6 @@ export const ABI ={ abi :
     },
     {
       "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "selfmint",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -445,12 +489,12 @@ export const ABI ={ abi :
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "whitelistedAddr",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
-      "name": "setSpecificDefaultAddress",
+      "name": "setCustumRate",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -468,7 +512,20 @@ export const ABI ={ abi :
           "type": "uint256"
         }
       ],
-      "name": "setSpecificDefaultAddressAndRate",
+      "name": "setRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "whitelistedAddr",
+          "type": "address"
+        }
+      ],
+      "name": "setRecipient",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -486,22 +543,9 @@ export const ABI ={ abi :
           "type": "uint256"
         }
       ],
-      "name": "setSpecificRate",
+      "name": "setRecipientAddressAndRate",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "specificDefaultAddress",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -599,19 +643,6 @@ export const ABI ={ abi :
           "type": "bool"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },

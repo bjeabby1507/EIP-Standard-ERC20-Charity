@@ -21,12 +21,17 @@ import Paper from '@mui/material/Paper';
 
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
 
 function App() {
 
@@ -38,6 +43,7 @@ function App() {
     // Smart contract 
     const [Tokencontract, Setcontract] = useState("");
     const [TokenName, SetTokenName] = useState("");
+    const [TokenSymbol, SetTokenSymbol] = useState("");
     const [TotalSupply, SetTotalSupply] = useState(0);
     const [Decimals, SetDecimals] = useState(18);
 
@@ -65,6 +71,8 @@ function App() {
     const [AddressToCustomizeActivate, SetAddressToCustomizeActivate] = useState("");
     const [AddressToSend, SetAddressToSend] = useState("");
     const [Rate, SetRate] = useState(0);
+    const [Whitelisted, SetWhitelisted] = useState(0);
+    const [beforeTransferView, SetBeforeTransfer] = useState([]);
 
     //const [errorMessage, setErrorMessage] =  useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -81,15 +89,50 @@ function App() {
     };
 
     const [open, setOpen] = useState(false);
+    const [open1, setOpen1] = useState(false);
+    const [open2, setOpen2] = useState(false);
+    const [open3, setOpen3] = useState(false);
     const [openDefault, setOpenDefault] = useState(false);
+    const [openDefault1, setOpenDefault1] = useState(false);
+    const [openDefault2, setOpenDefault2] = useState(false);
+    const [openInfo, setOpenInfo] = useState(false);
 
-    async function handleClick2() {
-        setOpen(!open)
+    const [openTransfer, setOpenTransfer] = useState(false);
+    const [openBeforeTransfer, setOpenBeforeTransfer] = useState(false);
+
+    async function handleClick1() {
+        setOpenInfo(!openInfo)
+    }
+    ;
+    async function handleClick2(num) {
+        if (num === 2.0) {
+            setOpen(!open)
+        }else if (num === 2.1) {
+            setOpen1(!open1)
+        }else if (num === 2.2) {
+            setOpen2(!open2)
+        }else if (num === 2.3) {
+            setOpen3(!open3)
+        }
+        else {
+            console.log("click2: " + num);
+        }
     }
     ;
 
-    async function handleClick3() {
-        setOpenDefault(!openDefault)
+    async function handleClick3(num) {
+        if (num === 3.0) {
+            setOpenDefault(!openDefault)
+        }else if (num === 3.1) {
+            setOpenDefault1(!openDefault1)
+        }else if (num === 3.2) {
+            setOpenDefault2(!openDefault2)
+        }else if (num === 3.3) {
+            setOpenTransfer(!openTransfer)
+        }
+        else {
+            console.log("click3: " + num);
+        }
     }
     ;
 
@@ -103,7 +146,7 @@ function App() {
             let charityBalance = (await contract.balanceOf(e)) / (10 ** Decimals);
             let item = {
                 id: i + 1,
-                addresses: e,
+                addresses: e.toLowerCase(),
                 defaultRate: rate,
                 balance: charityBalance,
             }
@@ -166,12 +209,13 @@ function App() {
                     let contract = new ethers.Contract(Contract.toString(), ABI.abi, provider.getSigner());
                     const owner = await contract.owner();
                     const name = await contract.name();
+                    const symbol = await contract.symbol();
                     const decimals = await contract.decimals();
                     const isAd = (owner.toUpperCase() === account.toUpperCase());
 
-                    const user2 = "0x0591F951415Dc471Aa948A49E9Fe752ACB028E9B";
+                    const user2 = "0x0591F951415Dc471Aa948A49E9Fe752ACB028E9B".toLowerCase();
                     handleAdresses();
-                    
+
                     console.log(ABI.abi);
                     console.log(contract);
                     console.log("owner : ", owner.toUpperCase(), typeof owner);
@@ -185,6 +229,7 @@ function App() {
                     setIsAdmin(isAd);
 
                     SetTokenName(name);
+                    SetTokenSymbol(symbol);
                     SetDecimals(decimals);
                     Setuser2(user2);
                 } catch (e) {
@@ -324,7 +369,7 @@ function App() {
         setShowDialog(true);
         setMined(false);
         try {
-            let transaction = await Tokencontract.addToWhitelist(AddressToWhitelist);
+            let transaction = await Tokencontract.addToWhitelist(AddressToWhitelist.toLowerCase(), Amount * 100);
 
             SetDialog(transaction);
         } catch (error) {
@@ -342,7 +387,7 @@ function App() {
         setShowDialog(true);
         setMined(false);
         try {
-            let transaction = await Tokencontract.deleteFromWhitelist(AddressToRemoveFromWhitelist);
+            let transaction = await Tokencontract.deleteFromWhitelist(AddressToRemoveFromWhitelist.toLowerCase());
 
             SetDialog(transaction);
         } catch (error) {
@@ -360,7 +405,7 @@ function App() {
         setShowDialog(true);
         setMined(false);
         try {
-            let transaction = await Tokencontract.setSpecificRate(AddressToCustomize, Amount * 100);
+            let transaction = await Tokencontract.setRate(AddressToCustomize.toLowerCase(), Amount * 100);
 
             SetDialog(transaction);
         } catch (error) {
@@ -375,20 +420,31 @@ function App() {
     //get whitelistt address rate
     async function GetRate(address) {
         try {
-            const rate = await Tokencontract.whitelistedRate(address);
-            const charity = await Tokencontract.specificDefaultAddress();
-            const customRate = (await Tokencontract.getRate()/ 100).toString();
-            const defaultrate = (await Tokencontract.whitelistedRate(charity)/ 100).toString();
+            // const rate = await Tokencontract.whitelistedRate(address);
+            // const charity = await Tokencontract.getRecipientAddressOf(myAddress);
+            // const customRate = (await Tokencontract.getRateOf(myAddress)/ 100).toString();
+            // const defaultrate = (await Tokencontract.whitelistedRate(charity)/ 100).toString();
+
+            const charityInfo = await Tokencontract.charityInfo(address.toLowerCase());
+            const rate = (charityInfo.defaultRate / 100).toString();
+            const charity = charityInfo.msgRecipient;
+            const customRate = (charityInfo.msgRate / 100).toString();
+            const defaultrate = (charityInfo.RecipientRate / 100).toString();
             // console.log((rate / 100).toString());
             // console.log("customRate",(customRate/ 100).toString());
             // console.log("defaultrate",(defaultrate/ 100).toString());
 
+            console.log("charityInfo", charityInfo, charityInfo.defaultRate, charityInfo.whitelisted);
+            const whitelisted = (charityInfo.whitelisted).toString();
+            SetWhitelisted(charityInfo.whitelisted);
+
             let item = {
+                whitelisted: whitelisted,
                 address: charity,
                 defaultRate: defaultrate,
                 rate: customRate,
             }
-            SetRate((rate / 100).toString());
+            SetRate(rate);
             SetCharity(item);
         } catch (error) {
             alert('Something went wrong, try again.');
@@ -403,7 +459,7 @@ function App() {
         setShowDialog(true);
         setMined(false);
         try {
-            let transaction = await Tokencontract.setSpecificDefaultAddress(AddressToActivate);
+            let transaction = await Tokencontract.setRecipient(AddressToActivate.toLowerCase());
 
             SetDialog(transaction);
         } catch (error) {
@@ -421,11 +477,29 @@ function App() {
         setShowDialog(true);
         setMined(false);
         try {
-            let transaction = await Tokencontract.setSpecificDefaultAddressAndRate(AddressToCustomizeActivate, Amount * 100);
+            let transaction = await Tokencontract.setRecipientAddressAndRate(AddressToCustomizeActivate.toLowerCase(), Amount * 100);
 
             SetDialog(transaction);
         } catch (error) {
-            alert(error);
+            alert(error.message);
+            //setErrorMessage(error.message);
+            console.log(error);
+
+            RemoveDialog();
+        }
+    }
+
+    //customize charity
+    async function Custum() {
+        setShowSign(true);
+        setShowDialog(true);
+        setMined(false);
+        try {
+            let transaction = await Tokencontract.setCustumRate(Amount * 100);
+
+            SetDialog(transaction);
+        } catch (error) {
+            alert(error.message);
             //setErrorMessage(error.message);
             console.log(error);
 
@@ -439,7 +513,7 @@ function App() {
         setShowDialog(true);
         setMined(false);
         try {
-            let transaction = await Tokencontract.DeleteDefaultAddress();
+            let transaction = await Tokencontract.deleteRecipient();
 
             SetDialog(transaction);
         } catch (error) {
@@ -451,17 +525,55 @@ function App() {
         }
     }
 
+    //before Transfer
+    async function beforeTransfer() {
+        try {
+            const amount_send = Amount;
+            const charity = await Tokencontract.getRecipientAddressOf(myAddress.toLowerCase());
+            console.log("BT charity", charity);
+            const rate = await Tokencontract.getRateOf(charity);
+            const balance = await Tokencontract.balanceOf(myAddress.toLowerCase());
+            // console.log(rate.toString()/100);
+            const total = Number(amount_send) + (amount_send * rate) / 10000;
+            const msgBalance = balance / (10 ** Decimals);
+            console.log(total + " TST", msgBalance.toString());
+
+            let item = {
+                total: total,
+                msgBalance: msgBalance,
+            }
+            console.log(item);
+
+            GetRate(charity);
+            SetBeforeTransfer(item);
+            setOpenBeforeTransfer(!openBeforeTransfer)
+
+            // return [total, msgBalance]
+            // return {
+            //     total: total,
+            //     msgBalance: msgBalance
+            // }
+        } catch (error) {
+            alert('Something went wrong.');
+            //setErrorMessage(error.message);
+            console.log(error);
+        }
+    }
+
     //transfer charity
     async function Transfer() {
+        // beforeTransfer();
+        // console.log((beforeTransfer()).total);
         setShowSign(true);
         setShowDialog(true);
         setMined(false);
         try {
             const amount_send = Amount;
             const amnt = ethers.utils.parseEther(amount_send.toString());
-            let transaction = await Tokencontract.transfer(AddressToSend, amnt);
+            let transaction = await Tokencontract.transfer(AddressToSend.toLowerCase(), amnt);
 
             SetDialog(transaction);
+
         } catch (error) {
             alert('Something went wrong.');
             //setErrorMessage(error.message);
@@ -555,16 +667,12 @@ function App() {
         createData('CharityToken contract', Tokencontract.address),
         createData('Contract owner', Owner),
         createData('Token', TokenName),
-        // createData('Charity1 Address', Charity1),
-        // createData('Charity2 Address', Charity2),
         createData('User2 Address', User2),
     ];
 
     const supply_rows = [
         createData('Total Supply', TotalSupply),
         createData('Your token Balance', TokenBalance),
-        // createData('Charity1 token Balance', Cha1TokenBalance),
-        // createData('Charity2 token Balance', Cha2TokenBalance),
         createData('User2 token Balance', User2TokenBalance),
     ];
 
@@ -649,7 +757,7 @@ function App() {
             </div>
             <br />
             <div className="Supply">
-                <TableContainer component={Paper} elevation={6} sx={{ ":hover": { boxShadow: 20, }, borderRadius: '16px', maxWidth: 460, marginTop: '20px' }}>
+                <TableContainer component={Paper} elevation={6} sx={{ ":hover": { boxShadow: 16, }, borderRadius: '16px', maxWidth: 460, marginTop: '20px' }}>
                     <Table sx={{ minWidth: 350 }} aria-label="simple table">
                         <TableBody>
                             {supply_rows.map((row) => (
@@ -684,10 +792,9 @@ function App() {
                     </Table>
                 </TableContainer>
             </div>
-
-            {/*{isAdmin ? "true" : "false"} */}
             <br />
-            <div>
+            {/*{isAdmin ? "true" : "false"} */}
+            <div className="Actions" style={{ marginTop: '30px'}}>
                 <Box
                     component="form"
                     onSubmit={submitForm}
@@ -696,7 +803,7 @@ function App() {
                 >
                     {isAdmin &&
                         <List
-                            sx={{ width: '100%', maxWidth: 560, bgcolor: 'background.paper' }}
+                            sx={{ width: '100%', maxWidth: 560, bgcolor: 'background.paper'}}
                             component="nav"
                             aria-labelledby="nested-list-subheader"
                             subheader={
@@ -705,7 +812,7 @@ function App() {
                                 </ListSubheader>
                             }
                         >
-                            <ListItemButton onClick={handleClick2}>
+                            <ListItemButton onClick={() => handleClick2(2.0)}>
                                 <ListItemText primary="Mint" />
                                 {open ? <ExpandLess /> : <ExpandMore />}
                             </ListItemButton>
@@ -734,10 +841,11 @@ function App() {
                                     <Button variant="outlined" color="secondary" size="large" onClick={Mint}>Mint</Button>
                                 </div>
                             </Collapse>
-                            <ListItemButton onClick={handleClick2}>
+                            <ListItemButton onClick={() => handleClick2(2.1)}>
                                 <ListItemText primary="Whitelist charity address" />
+                                {open1 ? <ExpandLess /> : <ExpandMore />}
                             </ListItemButton>
-                            <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Collapse in={open1} timeout="auto" unmountOnExit>
                                 <div>
                                     <TextField
                                         required
@@ -747,13 +855,26 @@ function App() {
                                         value={AddressToWhitelist || ""}
                                         onChange={(e) => SetAddressToWhitelist(e.target.value)}
                                     />
+                                    <TextField
+                                        required
+                                        id="outlined-number"
+                                        label="Default rate"
+                                        type="number"
+                                        size="small"
+                                        value={Amount || ""}
+                                        onChange={(e) => SetAmount(e.target.value)}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
                                     <Button variant="outlined" color="secondary" size="large" onClick={Whitelist}>Whitelist</Button>
                                 </div>
                             </Collapse>
-                            <ListItemButton onClick={handleClick2}>
+                            <ListItemButton onClick={() => handleClick2(2.2)}>
                                 <ListItemText primary="Custom Rate" />
+                                {open2 ? <ExpandLess /> : <ExpandMore />}
                             </ListItemButton>
-                            <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Collapse in={open2} timeout="auto" unmountOnExit>
                                 <div>
                                     <TextField
                                         required
@@ -778,10 +899,11 @@ function App() {
                                     <Button variant="outlined" color="secondary" size="large" onClick={SetCustumRate}>Customize</Button>
                                 </div>
                             </Collapse>
-                            <ListItemButton onClick={handleClick2}>
+                            <ListItemButton onClick={() => handleClick2(2.3)}>
                                 <ListItemText primary="Remove charity address from Whitelist " />
+                                {open3 ? <ExpandLess /> : <ExpandMore />}
                             </ListItemButton>
-                            <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Collapse in={open3} timeout="auto" unmountOnExit>
                                 <div>
                                     <TextField
                                         required
@@ -806,11 +928,12 @@ function App() {
                             </ListSubheader>
                         }
                     >
-                        <ListItemButton>
+                        <ListItemButton onClick={handleClick1}>
                             <ListItemText primary="Charity info" />
+                            {openInfo ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
-                        <ListItem>
-                            <div>
+                        <Collapse in={openInfo} timeout="auto" unmountOnExit>
+                            <div style={{ textAlign: 'center', paddingBottom: '30px' }}>
                                 <TextField
                                     required
                                     id="outlined-required"
@@ -820,13 +943,27 @@ function App() {
                                     onChange={(e) => SetAddressToGetinfo(e.target.value)}
                                 />
                                 <Button variant="outlined" color="secondary" size="large" onClick={() => GetRate(AddressToGetinfo)}>Get Info</Button>
-                                <p> Default rate: {Rate} %</p>
-                                <p> User registered address: {Charity.address}</p>
-                                <p> User registered address rate : {Charity.rate} %</p>
-                                <p> User registered address default rate: {Charity.defaultRate} %</p>
+                                <Divider>INFO</Divider>
+                                <Box sx={{ m: 2 }}>
+                                            <Stack direction="row" spacing={1} justifyContent="center">
+                                                {Whitelisted ? <Chip color="success" label={`Whitelisted: ${Charity.whitelisted}`}/> : <Chip color="primary" label={`Whitelisted: ${Charity.whitelisted}`}/>}
+                                                <Chip label={`Default rate: ${Rate}%`} />
+                                            </Stack>
+                                            <Stack direction="row" spacing={1} justifyContent="center">
+                                                <Chip sx={{  width: '100%' }} label={`User registered Recipient address:  ${Charity.address}`} />
+                                            </Stack>
+                                            <Stack direction="column" spacing={1} justifyContent="center">
+                                                <Chip sx={{  width: '100%' }} color = "warning" label={`Recipient custum rate :  ${Charity.rate}%`} />
+                                                <Chip sx={{  width: '100%' }} label={`Recipient default rate:  ${Charity.defaultRate}%`} />
+                                            </Stack>
+                                        </Box>
+                                {/* <p> Whitelisted/Default rate: {Charity.whitelisted} / {Rate} %</p>
+                                <p> User registered Recipient address: {Charity.address}</p>
+                                <p> Recipient custum rate : {Charity.rate} %</p>
+                                <p> Recipient default rate: {Charity.defaultRate} %</p> */}
                             </div>
-                        </ListItem>
-                        <ListItemButton onClick={handleClick3}>
+                        </Collapse>
+                        <ListItemButton onClick={() => handleClick3(3.0)}>
                             <ListItemText primary="Activate" />
                             {openDefault ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
@@ -843,10 +980,11 @@ function App() {
                                 <Button variant="outlined" color="secondary" size="large" onClick={Activate}>Activate</Button>
                             </div>
                         </Collapse>
-                        <ListItemButton onClick={handleClick3}>
+                        <ListItemButton onClick={() => handleClick3(3.1)}>
                             <ListItemText primary="Customize + Activate" />
+                            {openDefault1 ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
-                        <Collapse in={openDefault} timeout="auto" unmountOnExit>
+                        <Collapse in={openDefault1} timeout="auto" unmountOnExit>
                             <div>
                                 <TextField
                                     required
@@ -871,10 +1009,32 @@ function App() {
                                 <Button variant="outlined" color="secondary" size="large" onClick={ActivateCustum}>Customize + Activate</Button>
                             </div>
                         </Collapse>
-                        <ListItemButton>
-                            <ListItemText primary="Transfer" />
+                        <ListItemButton onClick={() => handleClick3(3.2)}>
+                            <ListItemText primary="Customize" />
+                            {openDefault2 ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
-                        <ListItem>
+                        <Collapse in={openDefault2} timeout="auto" unmountOnExit>
+                            <div>
+                                <TextField
+                                    required
+                                    id="outlined-number"
+                                    label="Customize rate"
+                                    type="number"
+                                    size="small"
+                                    value={Amount || ""}
+                                    onChange={(e) => SetAmount(e.target.value)}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                                <Button variant="outlined" color="secondary" size="large" onClick={Custum}>Customize</Button>
+                            </div>
+                        </Collapse>
+                        <ListItemButton onClick={() => handleClick3(3.3)}>
+                            <ListItemText primary="Transfer" />
+                            {openTransfer ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                        <Collapse in={openTransfer} timeout="auto" unmountOnExit>
                             <div>
                                 <TextField
                                     required
@@ -896,9 +1056,44 @@ function App() {
                                         shrink: true,
                                     }}
                                 />
-                                <Button variant="outlined" color="secondary" size="large" onClick={Transfer}>Transfer</Button>
+                                <Button variant="outlined" color="primary" size="medium" onClick={beforeTransfer}>View transaction details</Button>
+                                <Collapse in={openBeforeTransfer} timeout="auto" unmountOnExit>
+                                    <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                                        <Box sx={{ my: 3, mx: 2 }}>
+                                            <Grid container alignItems="center">
+                                                <Grid item xs>
+                                                    <Typography gutterBottom variant="h4" component="div">
+                                                        Transaction Preview
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Typography gutterBottom variant="h6" component="div">
+                                                        {beforeTransferView.total} {TokenSymbol}
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+                                            <Typography color="text.secondary" variant="body2">
+                                                The price is the sum of the transfer with the additinal donation fee.
+                                            </Typography>
+                                        </Box>
+                                        <Divider variant="middle" />
+                                        <Box sx={{ m: 2 }}>
+                                            <Typography gutterBottom variant="body1">
+                                                Charity Info
+                                            </Typography>
+                                            <Stack direction="column" spacing={1} justifyContent="center">
+                                                <Chip label={`Token Balance: ${beforeTransferView.msgBalance}`} />
+                                                <Chip color="primary" label={`Recipient:  ${Charity.address}`} />
+                                                <Chip label={`rate :  ${Charity.rate}%`} />
+                                            </Stack>
+                                        </Box>
+                                        <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
+                                            <Button variant="outlined" color="secondary" size="large" onClick={Transfer}>Transfer</Button>
+                                        </Box>
+                                    </Box>
+                                </Collapse>
                             </div>
-                        </ListItem>
+                        </Collapse>
                     </List>
                     <br />
                     <div>
