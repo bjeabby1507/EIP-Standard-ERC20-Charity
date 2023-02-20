@@ -4,7 +4,8 @@ on: [push]
 jobs:
   printEnv:
     ## The type of runner that the job will run on
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    environment: development 
     env:
       ## Environment variable
       API_KEY: ${{ secrets.API_KEY }}    
@@ -15,10 +16,7 @@ jobs:
   
   analyze:
     runs-on: ubuntu-latest
-    env:
-      API_KEY: ${{ secrets.API_KEY }}
-      COINMARKETCAP_API: ${{ secrets.COINMARKETCAP_API }}
-      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+    environment: development
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
