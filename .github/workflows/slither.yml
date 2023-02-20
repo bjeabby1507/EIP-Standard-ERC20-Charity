@@ -15,9 +15,9 @@ jobs:
           sarif: results.sarif
           fail-on: medium
         env:
-          API_KEY: ${{ env.API_KEY }}
-          COINMARKETCAP_API: ${{ env.COINMARKETCAP_API }}
-          PRIVATE_KEY: ${{ env.PRIVATE_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
+          COINMARKETCAP_API: ${{ secrets.COINMARKETCAP_API }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v2
