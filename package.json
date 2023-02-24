@@ -1,9 +1,11 @@
 {
   "name": "loyalty",
   "version": "1.0.0",
-  "description": "",
+  "description": "This EIP introduces an extension to the ERC-20 standard token that allows Token owners to donate to some charity organization.",
   "main": "index.js",
   "scripts": {
+    "toolbox": "docker run --rm -it -v ${pwd}:/src trailofbits/eth-security-toolbox",
+    "echidna": "docker run --rm -it -v ${pwd}:/work --workdir /work ghcr.io/crytic/echidna/echidna",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
