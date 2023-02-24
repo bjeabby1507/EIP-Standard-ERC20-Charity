@@ -15,7 +15,10 @@ maxBlockDelay: 60480
 cryticArgs:
   [
     "--solc-remaps",
+    # '@=node_modules/@',
     "@openzeppelin/contracts=/src/node_modules/@openzeppelin/contracts",
     "--solc-args",
     "--allow-paths /src/contracts",
   ]
+
+# TO TEST: echidna-test --config=contracts/test/fuzzing/echidnaConfig.yml contracts/test/fuzzing/CharityFuzz.sol --contract=CharityFuzz

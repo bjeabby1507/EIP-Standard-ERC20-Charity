@@ -11,7 +11,7 @@ import "../../CharityToken.sol";
  */
 
 contract CharityFuzz is CharityToken{
-    constructor() {}
+    constructor() CharityToken() {}
 
     function echidna_test_owner() public view returns (bool) {
         return owner() == address(0x30000);
