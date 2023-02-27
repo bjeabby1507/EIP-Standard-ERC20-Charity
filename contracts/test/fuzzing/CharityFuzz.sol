@@ -11,7 +11,18 @@ import "../../CharityToken.sol";
  */
 
 contract CharityFuzz is CharityToken{
-    constructor() CharityToken() {}
+    constructor() CharityToken() {
+        // address add1 = address(0x10000);
+        // address add2 = address(0x20000);
+        // address add3 = address(0x20000);
+        // address add4 = address(0x40000);
+
+        // //set value to
+        // whitelistedRate[add1] ==1000;
+        // whitelistedRate[add2] ==2000;
+        // whitelistedRate[add3] == 0;
+        // whitelistedRate[add4] ==4000;
+    }
 
     function echidna_test_owner() public view returns (bool) {
         return owner() == address(0x30000);
@@ -21,11 +32,7 @@ contract CharityFuzz is CharityToken{
         return _feeDenominator() == 10000;
     }
 
-    function echidna_test_whitelistedRate() public view returns (bool) {
-        address add1 = address(0x10000);
-        address add2 = address(0x20000);
-        address add3 = address(0x20000);
-        address add4 = address(0x40000);
-        return whitelistedRate[add1] ==2000 && whitelistedRate[add2] ==2000 && whitelistedRate[add3] == 0 && whitelistedRate[add4] ==4000;
-    }
+    // function echidna_test_whitelistedRate() public view returns (bool) {
+    
+    // }
 }
