@@ -11,17 +11,17 @@ import "./ERC20Charity.sol";
  */
 
 contract CharityToken is ERC20Charity{
-    address private _owner;
+    // address private _owner;
     constructor() ERC20("TestToken", "TST") {
-        _owner = msg.sender;
+        // _owner = msg.sender;
         _mint(msg.sender, 10000 * 10 ** decimals());
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == _owner, 
-        "Ownable: caller is not the owner");
-        _;
-    }
+    // modifier onlyOwner() {
+    //     require(msg.sender == _owner, 
+    //     "Ownable: caller is not the owner");
+    //     _;
+    // }
 
     /**
      * @dev Emitted when `toAdd` charity address is added to `whitelistedRate`.
@@ -77,7 +77,7 @@ contract CharityToken is ERC20Charity{
      *
      * @param toAdd The address to whitelist.
      */
-    function addToWhitelist(address toAdd, uint256 rate) external virtual onlyOwner {
+    function addToWhitelist(address toAdd, uint256 rate) public onlyOwner {
         if (indexOfAddresses[toAdd] == 0) {
             whitelistedRate[toAdd] = rate;
             whitelistedAddresses.push(toAdd);
@@ -95,7 +95,7 @@ contract CharityToken is ERC20Charity{
      *
      * @param toRemove The address to remove from whitelist.
      */
-    function deleteFromWhitelist(address toRemove) external virtual onlyOwner {
+    function deleteFromWhitelist(address toRemove) public onlyOwner {
         uint256 index1 = indexOfAddresses[toRemove];
         require(index1 > 0, "Invalid index"); //Indexing starts at 1, 0 is not allowed
         // move the last item into the index being vacated

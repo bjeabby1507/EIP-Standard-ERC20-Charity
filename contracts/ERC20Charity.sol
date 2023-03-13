@@ -21,6 +21,16 @@ abstract contract ERC20Charity is IERC20charity, ERC20 {
     mapping(address => address) private _Recipient; //keep track of each user's default charity address
 
     address[] whitelistedAddresses; //Addresses whitelisted
+    address public _owner;
+    constructor() {
+        _owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == _owner, 
+        "Ownable: caller is not the owner");
+        _;
+    }
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -110,7 +120,7 @@ abstract contract ERC20Charity is IERC20charity, ERC20 {
     function setRate(
         address whitelistedAddr,
         uint256 rate
-    ) external virtual {
+    ) external virtual onlyOwner {
         require(
             rate <= _feeDenominator(),
             "ERC20Charity: rate must be between 0 and _feeDenominator"

@@ -33,3 +33,13 @@ jobs:
           contract: CharityFuzz
           config: contracts/test/fuzzing/echidnaConfig.yml
           crytic-args: --hardhat-ignore-compile --solc-remaps @openzeppelin/contracts=node_modules/@openzeppelin/contracts
+
+      - name: Run Echidna Assertion mode
+        uses: crytic/echidna-action@v2
+        with:
+          solc-version: 0.8.9
+          test-mode : assertion
+          files: contracts/test/fuzzing/CharityFuzz.sol
+          contract: CharityFuzz
+          config: contracts/test/fuzzing/echidnaConfig.yml
+          crytic-args: --hardhat-ignore-compile --solc-remaps @openzeppelin/contracts=node_modules/@openzeppelin/contracts

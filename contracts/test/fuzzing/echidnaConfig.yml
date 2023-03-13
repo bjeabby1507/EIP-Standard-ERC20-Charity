@@ -4,8 +4,10 @@ deployer: "0x30000"
 # the same as contract deployer
 psender: "0x10000"
 # sender is set of addresses transactions may originate from
-sender: ["0x10000", "0x20000", "0x30000"]
-# testLimit is the number of test sequences to run; default is 50000
+sender: ["0x10000", "0x20000", "0x40000"]
+# Address to deploy the contract to test.
+contractAddr : "0x12342"
+# testLimit is the number of test sequencesto run; default is 50000
 testLimit: 10000
 # maximum time between generated txs; default is one week
 maxTimeDelay: 0
@@ -22,3 +24,6 @@ cryticArgs:
   ]
 
 # TO TEST: echidna-test --config=contracts/test/fuzzing/echidnaConfig.yml contracts/test/fuzzing/CharityFuzz.sol --contract=CharityFuzz
+# asserttion mode : echidna-test --config=contracts/test/fuzzing/echidnaConfig.yml contracts/test/fuzzing/CharityFuzz.sol --contract=CharityFuzz --test-mode assertion
+#solc-select install 0.8.9
+# solc-select use 0.8.9
