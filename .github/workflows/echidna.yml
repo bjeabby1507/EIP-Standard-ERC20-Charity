@@ -44,11 +44,25 @@ jobs:
           config: contracts/test/fuzzing/echidnaConfig.yml
           crytic-args: --hardhat-ignore-compile --solc-remaps @openzeppelin/contracts=node_modules/@openzeppelin/contracts
 
+      - name: Upload dev-Artifact build files
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-dev-artifact
+          path: ./build
+          retention-days: 3
+
   property:
     runs-on: ubuntu-latest
     environment: development
     needs: build
+    defaults:
+      run:
+        working-directory: my-dev-artifact
     steps:
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: my-dev-artifact
       - name: Run Echidna
         uses: crytic/echidna-action@v2
         with:
@@ -62,7 +76,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     needs: build
+    defaults:
+      run:
+        working-directory: my-dev-artifact
     steps:
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: my-dev-artifact
       - name: Run Echidna Assertion mode
         uses: crytic/echidna-action@v2
         with:
