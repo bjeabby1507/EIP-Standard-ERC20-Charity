@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: my-dev-artifact
-          path: ./build
+          path: .
           retention-days: 3
 
   property:
