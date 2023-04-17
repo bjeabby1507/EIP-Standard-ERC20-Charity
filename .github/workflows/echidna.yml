@@ -28,6 +28,7 @@ jobs:
   property:
     runs-on: ubuntu-latest
     environment: development
+    needs: build
     steps:
       - name: Run Echidna
         uses: crytic/echidna-action@v2
@@ -41,6 +42,7 @@ jobs:
   assertion:
     runs-on: ubuntu-latest
     environment: development
+    needs: build
     steps:
       - name: Run Echidna Assertion mode
         uses: crytic/echidna-action@v2
