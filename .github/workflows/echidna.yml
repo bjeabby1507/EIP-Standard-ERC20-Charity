@@ -23,7 +23,7 @@ jobs:
         env:
           API_KEY: ${{ secrets.API_KEY }}
           COINMARKETCAP_API: ${{ secrets.COINMARKETCAP_API }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}^p
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       
       - name: Run Echidna
         uses: crytic/echidna-action@v2
