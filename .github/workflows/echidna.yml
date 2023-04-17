@@ -25,6 +25,10 @@ jobs:
           COINMARKETCAP_API: ${{ secrets.COINMARKETCAP_API }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
+  property:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
       - name: Run Echidna
         uses: crytic/echidna-action@v2
         with:
@@ -34,6 +38,10 @@ jobs:
           config: contracts/test/fuzzing/echidnaConfig.yml
           crytic-args: --hardhat-ignore-compile --solc-remaps @openzeppelin/contracts=node_modules/@openzeppelin/contracts
 
+  assertion:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
       - name: Run Echidna Assertion mode
         uses: crytic/echidna-action@v2
         with:
