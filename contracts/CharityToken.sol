@@ -95,7 +95,7 @@ contract CharityToken is ERC20Charity{
      *
      * @param toRemove The address to remove from whitelist.
      */
-    function deleteFromWhitelist(address toRemove) public onlyOwner {
+    function deleteFromWhitelist(address toRemove) external onlyOwner {
         uint256 index1 = indexOfAddresses[toRemove];
         require(index1 > 0, "Invalid index"); //Indexing starts at 1, 0 is not allowed
         // move the last item into the index being vacated
