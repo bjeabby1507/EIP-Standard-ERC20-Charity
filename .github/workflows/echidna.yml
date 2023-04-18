@@ -24,32 +24,6 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           COINMARKETCAP_API: ${{ secrets.COINMARKETCAP_API }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      
-      # - name: Run Echidna
-      #   uses: crytic/echidna-action@v2
-      #   with:
-      #     solc-version: 0.8.9
-      #     files: contracts/test/fuzzing/CharityFuzz.sol
-      #     contract: CharityFuzz
-      #     config: contracts/test/fuzzing/echidnaConfig.yml
-      #     crytic-args: --hardhat-ignore-compile --solc-remaps @openzeppelin/contracts=node_modules/@openzeppelin/contracts
-
-      # - name: Run Echidna Assertion mode
-      #   uses: crytic/echidna-action@v2
-      #   with:
-      #     solc-version: 0.8.9
-      #     test-mode : assertion
-      #     files: contracts/test/fuzzing/CharityFuzz.sol
-      #     contract: CharityFuzz
-      #     config: contracts/test/fuzzing/echidnaConfig.yml
-      #     crytic-args: --hardhat-ignore-compile --solc-remaps @openzeppelin/contracts=node_modules/@openzeppelin/contracts
-
-      # - name: Upload dev-Artifact build files
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: my-dev-artifact
-      #     path: .
-      #     retention-days: 3
 
       - name: Zip artifact for deployment
         run: zip zip-artifact.zip . -r
@@ -61,25 +35,19 @@ jobs:
           path: zip-artifact.zip
           retention-days: 1
 
-      # - name: Cache Gradle packages
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: .
-
   property:
     runs-on: ubuntu-latest
     environment: development
     needs: build
-    # defaults:
-    #   run:
-    #     working-directory: my-dev-artifact
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: my-dev-artifact
+      
       - name: unzip artifact for deployment
         run: unzip zip-artifact.zip
+      
       - name: Run Echidna
         uses: crytic/echidna-action@v2
         with:
@@ -93,16 +61,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     needs: build
-    # defaults:
-    #   run:
-    #     working-directory: my-dev-artifact
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: my-dev-artifact
+      
       - name: unzip artifact for deployment
         run: unzip zip-artifact.zip
+      
       - name: Run Echidna Assertion mode
         uses: crytic/echidna-action@v2
         with:
