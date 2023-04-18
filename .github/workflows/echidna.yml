@@ -52,13 +52,13 @@ jobs:
       #     retention-days: 3
 
       - name: Zip artifact for deployment
-        run: zip my-dev-artifact.zip . -r
+        run: zip zip-artifact.zip . -r
 
       - name: Upload dev-Artifact build files
         uses: actions/upload-artifact@v3
         with:
           name: my-dev-artifact
-          path: my-dev-artifact.zip
+          path: zip-artifact.zip
           retention-days: 1
 
       # - name: Cache Gradle packages
@@ -79,7 +79,7 @@ jobs:
         with:
           name: my-dev-artifact
       - name: unzip artifact for deployment
-        run: unzip my-dev-artifact.zip
+        run: unzip zip-artifact.zip -d .
       - name: Run Echidna
         uses: crytic/echidna-action@v2
         with:
@@ -102,7 +102,7 @@ jobs:
         with:
           name: my-dev-artifact
       - name: unzip artifact for deployment
-        run: unzip my-dev-artifact.zip
+        run: unzip zip-artifact.zip -d .
       - name: Run Echidna Assertion mode
         uses: crytic/echidna-action@v2
         with:
