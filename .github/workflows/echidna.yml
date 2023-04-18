@@ -70,16 +70,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     needs: build
-    defaults:
-      run:
-        working-directory: my-dev-artifact
+    # defaults:
+    #   run:
+    #     working-directory: my-dev-artifact
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: my-dev-artifact
       - name: unzip artifact for deployment
-        run: unzip zip-artifact.zip -d .
+        run: unzip zip-artifact.zip
       - name: Run Echidna
         uses: crytic/echidna-action@v2
         with:
@@ -93,16 +93,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     needs: build
-    defaults:
-      run:
-        working-directory: my-dev-artifact
+    # defaults:
+    #   run:
+    #     working-directory: my-dev-artifact
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: my-dev-artifact
       - name: unzip artifact for deployment
-        run: unzip zip-artifact.zip -d .
+        run: unzip zip-artifact.zip
       - name: Run Echidna Assertion mode
         uses: crytic/echidna-action@v2
         with:
